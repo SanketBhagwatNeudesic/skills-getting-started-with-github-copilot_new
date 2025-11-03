@@ -82,6 +82,8 @@ document.addEventListener("DOMContentLoaded", () => {
         messageDiv.textContent = result.message;
         messageDiv.className = "success";
         signupForm.reset();
+        // Refresh activities immediately to show updated participant list
+        fetchActivities();
       } else {
         messageDiv.textContent = result.detail || "An error occurred";
         messageDiv.className = "error";
@@ -89,10 +91,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
       messageDiv.classList.remove("hidden");
 
-      // Hide message after 5 seconds
+      // Add click to dismiss functionality
+      messageDiv.style.cursor = "pointer";
+      messageDiv.title = "Click to dismiss";
+
+      const dismissMessage = () => {
+        messageDiv.classList.add("hidden");
+        messageDiv.removeEventListener("click", dismissMessage);
+      };
+
+      messageDiv.addEventListener("click", dismissMessage);
+
+      // Hide message after 3 seconds (reduced from 5)
       setTimeout(() => {
         messageDiv.classList.add("hidden");
-      }, 5000);
+        messageDiv.removeEventListener("click", dismissMessage);
+      }, 3000);
     } catch (error) {
       messageDiv.textContent = "Failed to sign up. Please try again.";
       messageDiv.className = "error";
